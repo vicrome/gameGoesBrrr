@@ -96,7 +96,7 @@ public class buildSystem : MonoBehaviour
             int PosX = (int)Mathf.Round(hit.point.x);
             int PosY = (int)Mathf.Round(hit.point.y);
             int PosZ = (int)Mathf.Round(hit.point.z);
-            Vector3 pos = new Vector3(PosX, PosY, PosZ);
+            Vector3 pos = new Vector3(PosX, PosY+0.5f, PosZ);
             previewGameObject.transform.position = pos;
 
             if(PosX != LastPosX || PosY != LastPosY || PosZ != LastPosZ)
@@ -104,7 +104,7 @@ public class buildSystem : MonoBehaviour
                 LastPosX = PosX;
                 LastPosY = PosY;
                 LastPosZ = PosZ;
-                previewGameObject.transform.position = new Vector3(PosX, PosY, PosZ);
+                previewGameObject.transform.position = new Vector3(PosX, PosY+0.5f, PosZ);
             }
 
             Debug.Log(pos);
