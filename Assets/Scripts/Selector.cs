@@ -31,8 +31,6 @@ public class Selector : MonoBehaviour
     //[Header("All of the currently Selected Units")]
     private List<GameObject> selectedUnits = new List<GameObject>();
 
-
-
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -59,7 +57,22 @@ public class Selector : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1))
         {
-            MoveAllUnits(DoRay());
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, 1000f, mask))
+            {
+                if (hit.collider.CompareTag("Ground"))
+                {
+                    MoveAllUnits(hit.point);
+                    Debug.Log("Moving at hitted ground location");
+                }
+                else if (hit.collider.tag == "Resource")
+                {
+                    MoveAllUnits(hit.collider.gameObject.transform.position);
+                    Debug.Log("Moving to harvest");
+                }
+            }
         }
     }
 
@@ -81,6 +94,7 @@ public class Selector : MonoBehaviour
         {
             Unit unit = selectedUnits[i].GetComponent<Unit>();
             unit.DeselectUnit();
+        
         }
 
         selectedUnits.Clear();

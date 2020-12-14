@@ -8,6 +8,7 @@ TagManager:
   - Unit
   - Select_Icon
   - Ground
+  - Resource
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - 
   - GroundLayer
   - BuildLayer
-  - 
+  - ResourcesLayer
   - 
   - 
   - 
