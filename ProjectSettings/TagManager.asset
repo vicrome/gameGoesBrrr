@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Foundation_SP
+  - Unit
+  - Select_Icon
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -14,7 +17,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - GroundLayer
   - BuildLayer
   - 
   - 
