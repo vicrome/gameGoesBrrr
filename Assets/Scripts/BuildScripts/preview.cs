@@ -9,6 +9,7 @@ public class preview : MonoBehaviour
     private MeshRenderer myRend;
     public Material goodMat;
     public Material badMat;
+    public string tipoBuilding;
 
     private buildSystem myBuildSystem;
 

@@ -8,6 +8,9 @@ public class buildSystem : MonoBehaviour
     public LayerMask layer;
     private GameObject previewGameObject = null;
     private preview previewScript = null;
+    int LastPosX, LastPosY, LastPosZ;
+    public string tipoBuilding;
+    public float OffsetX,OffsetY, OffsetZ;
 
     public float stickTolerance = 1.5f;
 
@@ -61,6 +64,25 @@ public class buildSystem : MonoBehaviour
         previewGameObject = Instantiate(myObject, Vector3.zero, Quaternion.identity);
         previewScript = previewGameObject.GetComponent<preview>();
         isBuilding = true;
+        tipoBuilding = previewScript.tipoBuilding;
+        if (tipoBuilding == "1L")
+        {
+            OffsetX = 0;
+            OffsetY = 0.5f;
+            OffsetZ = 0;
+        }
+        if (tipoBuilding == "2L")
+        {
+            OffsetX = 0.5f;
+            OffsetY = 0.5f;
+            OffsetZ = 0;
+        }
+        if (tipoBuilding == "2X2")
+        {
+            OffsetX = 0.5f;
+            OffsetY = 0.5f;
+            OffsetZ = 0.5f;
+        }
     }
 
     private void CancelBuild()
@@ -88,12 +110,25 @@ public class buildSystem : MonoBehaviour
     {
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
+        
 
-        if (Physics.Raycast(ray, out hit, 100f, layer))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, layer))
         {
-            float y = hit.point.y + (previewGameObject.transform.localScale.y / 2f);
-            Vector3 pos = new Vector3(hit.point.x, y, hit.point.z);
+            int PosX = (int)Mathf.Round(hit.point.x);
+            int PosY = (int)Mathf.Round(hit.point.y);
+            int PosZ = (int)Mathf.Round(hit.point.z);
+            Vector3 pos = new Vector3(PosX + OffsetX, PosY + OffsetY, PosZ+ OffsetZ);
             previewGameObject.transform.position = pos;
+
+            if(PosX != LastPosX || PosY != LastPosY || PosZ != LastPosZ)
+            {
+                LastPosX = PosX;
+                LastPosY = PosY;
+                LastPosZ = PosZ;
+                previewGameObject.transform.position = new Vector3(PosX+ OffsetX, PosY+ OffsetY, PosZ+ OffsetZ);
+            }
+
+            Debug.Log(pos);
         }
     }
 }
