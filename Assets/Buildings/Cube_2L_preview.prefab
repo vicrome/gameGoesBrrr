@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4078140685086670183}
   - component: {fileID: 3356829270239066319}
   m_Layer: 9
-  m_Name: Cube_preview
+  m_Name: Cube_2L_preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 6561449733302280374}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 9.52, y: 0.5, z: 5.394432}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -123,10 +123,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d02f57a2de32b14ab2ff805217f8e02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 2983639360823952149, guid: 4000c6ffb145c9f438a4164fa5d96d70, type: 3}
+  prefab: {fileID: 2983639360823952149, guid: b16c537dbd8d3144c9d8a0ca40b2c5f9, type: 3}
   goodMat: {fileID: 2100000, guid: 9c0721c9b4f3c4cb894656485acb9228, type: 2}
   badMat: {fileID: 2100000, guid: deda211578c2d47f69bee1211faed775, type: 2}
-  tipoBuilding: 1L
+  tipoBuilding: 2L
   isFoundation: 1
   tagISnapTo:
   - Foundation_SP
