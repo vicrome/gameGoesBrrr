@@ -18,6 +18,13 @@ public class Unit : MonoBehaviour
     public int maxHeldResource;
     public bool isGathering = false;
 
+    public TaskList task;
+    public ResourceManager resourceManager;
+
+    public GameObject targetNode;
+
+    GameObject[] drops;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -33,11 +40,47 @@ public class Unit : MonoBehaviour
     {
         if (heldResource >= maxHeldResource)
         {
+            Debug.Log("Vamos a dejar los materiales");
+            drops = GameObject.FindGameObjectsWithTag("Drops");
+            MoveToSpot(GetClosestDropOff(drops).transform.position);
+            drops = null;
+            isGathering = false;
+            task = TaskList.Delivering;
+        }
 
+        if (targetNode == null)
+        {
+            if (heldResource != 0)
+            {
+                drops = GameObject.FindGameObjectsWithTag("Drops");
+                MoveToSpot(GetClosestDropOff(drops).transform.position);
+                drops = null;
+                task = TaskList.Delivering;
+            }
+            else
+            {
+                task = TaskList.Idle;
+            }
         }
     }
 
-
+    GameObject GetClosestDropOff(GameObject[] dropOffs)
+    {
+        GameObject closestDrop = null;
+        float closestDistance = Mathf.Infinity;
+        Vector3 position = transform.position;
+        foreach (GameObject targetDrop in dropOffs)
+        {
+            Vector3 direction = targetDrop.transform.position - position;
+            float distance = direction.sqrMagnitude;
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestDrop = targetDrop;
+            }
+        }
+        return closestDrop;
+    }
     public void SelectUnit()
     {
         selectorIcon.SetActive(true);
@@ -77,11 +120,26 @@ public class Unit : MonoBehaviour
     {
         GameObject hitObject = other.gameObject;
 
-        if (hitObject.tag == "Resource")
+        if (hitObject.tag == "Resource" && task == TaskList.Gathering)
         {
             isGathering = true;
             hitObject.GetComponent<NodeManager>().numberGatherers++;
             heldResourceType = hitObject.GetComponent<NodeManager>().resourceType;
+            targetNode = hitObject;
+        }
+        else if(hitObject.tag == "Drops" && task == TaskList.Delivering)
+        {
+            if (resourceManager.material1 < resourceManager.maxMaterial1)
+            {
+                resourceManager.material1 += heldResource;
+                heldResource = 0;
+                task = TaskList.Gathering;
+                MoveToSpot(targetNode.transform.position);
+            }
+            else
+            {
+                task = TaskList.Idle;
+            }
         }
     }
 
@@ -91,8 +149,8 @@ public class Unit : MonoBehaviour
 
         if (hitObject.tag == "Resource")
         {
-            isGathering = false;
             hitObject.GetComponent<NodeManager>().numberGatherers--;
+            isGathering = false;
         }
     }
 
@@ -103,7 +161,7 @@ public class Unit : MonoBehaviour
             yield return new WaitForSeconds(1);
             if (isGathering)
             {
-                heldResource = heldResource + 10;
+                heldResource += 10;
                 Debug.Log("Unit materials have increase in 10");
             }
         }

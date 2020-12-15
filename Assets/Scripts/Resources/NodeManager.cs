@@ -32,8 +32,8 @@ public class NodeManager : MonoBehaviour
     {
         if(numberGatherers > 0)
         {
-            availableResource = availableResource - 10;
-            Debug.Log("Resources number have been decreased in 10 by seg");
+            availableResource -= (10 * numberGatherers);
+            Debug.Log("Resources number have been decreased in " + (10 * numberGatherers) + "by seg");
         }
     }
 

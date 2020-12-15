@@ -57,7 +57,7 @@ public class Selector : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1))
         {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit, 1000f, mask))
@@ -65,11 +65,23 @@ public class Selector : MonoBehaviour
                 if (hit.collider.CompareTag("Ground"))
                 {
                     MoveAllUnits(hit.point);
+                    for (int i = 0; i < selectedUnits.Count; i++)
+                    {
+                        Unit unit = selectedUnits[i].GetComponent<Unit>();
+                        unit.task = TaskList.Moving;
+                    }
                     Debug.Log("Moving at hitted ground location");
+
                 }
                 else if (hit.collider.tag == "Resource")
                 {
                     MoveAllUnits(hit.collider.gameObject.transform.position);
+                    for (int i = 0; i < selectedUnits.Count; i++)
+                    {
+                        Unit unit = selectedUnits[i].GetComponent<Unit>();
+                        unit.task = TaskList.Gathering;
+                        unit.targetNode = hit.collider.gameObject;
+                    }
                     Debug.Log("Moving to harvest");
                 }
             }
@@ -118,7 +130,7 @@ public class Selector : MonoBehaviour
         }
     }
 
-    private void MoveAllUnits(Vector3 _pos)
+    public void MoveAllUnits(Vector3 _pos)
     {
         movetoPos = _pos;
 
