@@ -6,12 +6,11 @@ using UnityEngine.AI;
 
 public class Unit : MonoBehaviour
 {
- 
-    private NavMeshAgent myAgent;
-    private GameObject selectorIcon;
+    public NavMeshAgent myAgent;
+    public GameObject selectorIcon;
     private Vector3 startingPos;
-    private Vector3 offset;
 
+    public PlayerController PC;
     public enum heldResources { material1 };
     public NodeManager.ResourceTypes heldResourceType;
     public int heldResource;
@@ -22,7 +21,6 @@ public class Unit : MonoBehaviour
     public ResourceManager resourceManager;
 
     public GameObject targetNode;
-
     GameObject[] drops;
 
     // Start is called before the first frame update
@@ -38,84 +36,8 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (heldResource >= maxHeldResource)
-        {
-            Debug.Log("Vamos a dejar los materiales");
-            drops = GameObject.FindGameObjectsWithTag("Drops");
-            MoveToSpot(GetClosestDropOff(drops).transform.position);
-            drops = null;
-            isGathering = false;
-            targetNode.GetComponent<NodeManager>().miDiccionario.Remove(myAgent.GetComponent<Unit>().GetInstanceID());
-            task = TaskList.Delivering;
-        }
-
-        if (targetNode == null)
-        {
-            if (heldResource != 0)
-            {
-                drops = GameObject.FindGameObjectsWithTag("Drops");
-                MoveToSpot(GetClosestDropOff(drops).transform.position);
-                drops = null;
-                task = TaskList.Delivering;
-            }
-            else
-            {
-                task = TaskList.Idle;
-            }
-        }
+        
     }
-
-    GameObject GetClosestDropOff(GameObject[] dropOffs)
-    {
-        GameObject closestDrop = null;
-        float closestDistance = Mathf.Infinity;
-        Vector3 position = transform.position;
-        foreach (GameObject targetDrop in dropOffs)
-        {
-            Vector3 direction = targetDrop.transform.position - position;
-            float distance = direction.sqrMagnitude;
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestDrop = targetDrop;
-            }
-        }
-        return closestDrop;
-    }
-    public void SelectUnit()
-    {
-        selectorIcon.SetActive(true);
-    }
-
-    public void DeselectUnit()
-    {
-        selectorIcon.SetActive(false);
-        offset = Vector3.zero;
-    }
-
-    public void CalculateOffset(Vector3 _center)
-    {
-        Vector3 center = new Vector3(_center.x, transform.position.y, _center.z);
-        offset = center - transform.position;
-    }
-
-    public void MoveToSpot(Vector3 _pos)
-    {
-        Vector3 pos = new Vector3(_pos.x, transform.position.y, _pos.z);
-        Vector3 moveToPos = pos + offset;
-        myAgent.SetDestination(moveToPos);
-    }
-
-    public void MoveToSpot(Vector3 _pos, Vector3 _center)
-    {
-        Vector3 center = new Vector3(_center.x, transform.position.y, _center.z);
-        Vector3 pos = new Vector3(_pos.x, transform.position.y, _pos.z);
-
-        offset = center - transform.position;
-        Vector3 moveToPos = pos + offset;
-        myAgent.SetDestination(moveToPos);
-    }
-
 
     public void OnTriggerEnter(Collider other)
     {
@@ -135,7 +57,7 @@ public class Unit : MonoBehaviour
                 resourceManager.material1 += heldResource;
                 heldResource = 0;
                 task = TaskList.Gathering;
-                MoveToSpot(targetNode.transform.position);
+                myAgent.SetDestination(targetNode.transform.position);
             }
             else
             {
@@ -159,10 +81,34 @@ public class Unit : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1);
-            if (isGathering)
+            if (isGathering && targetNode.GetComponent<NodeManager>().availableResource>0)
             {
                 heldResource += 10;
                 Debug.Log("Unit materials have increase in 10");
+            }
+            if (heldResource >= maxHeldResource)
+            {
+                Debug.Log("Vamos a dejar los materiales");
+                drops = GameObject.FindGameObjectsWithTag("Drops");
+                myAgent.SetDestination(PC.GetClosestDropOff(drops).transform.position);
+                drops = null;
+                isGathering = false;
+                targetNode.GetComponent<NodeManager>().miDiccionario.Remove(myAgent.GetComponent<Unit>().GetInstanceID());
+                task = TaskList.Delivering;
+            }
+            if (targetNode == null)
+            {
+                if (heldResource != 0)
+                {
+                    drops = GameObject.FindGameObjectsWithTag("Drops");
+                    myAgent.SetDestination(PC.GetClosestDropOff(drops).transform.position);
+                    drops = null;
+                    task = TaskList.Delivering;
+                }
+                else
+                {
+                    task = TaskList.Idle;
+                }
             }
         }
     }

@@ -125,5 +125,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resourceType: 0
   harvestTime: 0
-  availableResource: 1500
-  numberGatherers: 0
+  availableResource: 110

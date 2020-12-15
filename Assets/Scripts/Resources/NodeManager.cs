@@ -20,15 +20,12 @@ public class NodeManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (availableResource <= 0)
-        {
-            Destroy(gameObject);
-        }        
+              
     }
 
     public void ResourceGather()
     {
-        if(miDiccionario.Count > 0)
+        if(miDiccionario.Count > 0 && availableResource > 0)
         {
             availableResource -= (10 * miDiccionario.Count);
             Debug.Log("Resources number have been decreased in " + (10 * miDiccionario.Count) + "by seg");
@@ -41,6 +38,10 @@ public class NodeManager : MonoBehaviour
         {
             yield return new WaitForSeconds(1);
             ResourceGather();
+            if (availableResource <= 0)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

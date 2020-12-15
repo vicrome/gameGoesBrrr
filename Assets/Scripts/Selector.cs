@@ -11,25 +11,19 @@ public class Selector : MonoBehaviour
 
     [Header("Gameobject for selection box")]
     public GameObject selectorBox;
-
-    [Header("Toggle Gizmos")]
-    public bool showGizmos;
-
-
-    private Vector3 movetoPos = Vector3.zero;
-
     //[Header("Selection Box start/end points")]
     private Vector3 startPoint;
     private Vector3 endPoint;
+    public Vector3 offset;
+
 
     //[Header("Selection Box Info")]
-    private RectangleF selectionRect;
     private Vector3 rectCenter;
     private Vector3 rectSize;
     private Vector3 halfExtents;
 
     //[Header("All of the currently Selected Units")]
-    private List<GameObject> selectedUnits = new List<GameObject>();
+    public List<GameObject> selectedObjects = new List<GameObject>();
 
     private void Update()
     {
@@ -54,38 +48,6 @@ public class Selector : MonoBehaviour
             HandleRectangle();
             SelectAllUnits();
         }
-
-        if (Input.GetMouseButtonDown(1))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, 1000f))
-            {
-                if (hit.collider.CompareTag("Ground"))
-                {
-                    MoveAllUnits(hit.point);
-                    for (int i = 0; i < selectedUnits.Count; i++)
-                    {
-                        Unit unit = selectedUnits[i].GetComponent<Unit>();
-                        unit.task = TaskList.Moving;
-                    }
-                    Debug.Log("Moving at hitted ground location");
-
-                }
-                else if (hit.collider.tag == "Resource")
-                {
-                    MoveAllUnits(hit.collider.gameObject.transform.position);
-                    for (int i = 0; i < selectedUnits.Count; i++)
-                    {
-                        Unit unit = selectedUnits[i].GetComponent<Unit>();
-                        unit.task = TaskList.Gathering;
-                        unit.targetNode = hit.collider.gameObject;
-                    }
-                    Debug.Log("Moving to harvest");
-                }
-            }
-        }
     }
 
     private void HandleRectangle()
@@ -102,14 +64,14 @@ public class Selector : MonoBehaviour
 
     private void ClearAllUnits()
     {
-        for (int i = 0; i < selectedUnits.Count; i++)
+        for (int i = 0; i < selectedObjects.Count; i++)
         {
-            Unit unit = selectedUnits[i].GetComponent<Unit>();
-            unit.DeselectUnit();
+            Unit unit = selectedObjects[i].GetComponent<Unit>();
+            DeselectUnit(unit);
         
         }
 
-        selectedUnits.Clear();
+        selectedObjects.Clear();
     }
 
     private void SelectAllUnits()
@@ -123,23 +85,13 @@ public class Selector : MonoBehaviour
             if (check[i].collider.CompareTag("Unit"))
             {
                 Unit unit = check[i].collider.GetComponent<Unit>();
-                unit.SelectUnit();
-                unit.CalculateOffset(rectCenter);
-                selectedUnits.Add(unit.gameObject);
+                SelectUnit(unit);
+                CalculateOffset(rectCenter);
+                selectedObjects.Add(unit.gameObject);
             }
         }
     }
 
-    public void MoveAllUnits(Vector3 _pos)
-    {
-        movetoPos = _pos;
-
-        for (int i = 0; i < selectedUnits.Count; i++)
-        {
-            Unit unit = selectedUnits[i].GetComponent<Unit>();
-            unit.MoveToSpot(_pos);
-        }
-    }
 
     private Vector3 DoRay()
     {
@@ -157,24 +109,20 @@ public class Selector : MonoBehaviour
         return Vector3.zero;
     }
 
-    private void OnDrawGizmos()
+    public void SelectUnit(Unit unit)
     {
-        if (showGizmos)
-        {
-            Gizmos.color = UnityEngine.Color.green;
-            Gizmos.DrawWireCube(rectCenter, rectSize);
+        unit.selectorIcon.SetActive(true);
+    }
 
-            Gizmos.color = UnityEngine.Color.yellow;
-            Gizmos.DrawWireSphere(startPoint, 0.5f);
+    public void DeselectUnit(Unit unit)
+    {
+        unit.selectorIcon.SetActive(false);
+        offset = Vector3.zero;
+    }
 
-            Gizmos.color = UnityEngine.Color.red;
-            Gizmos.DrawWireSphere(endPoint, 0.5f);
-
-            Gizmos.color = UnityEngine.Color.cyan;
-            Gizmos.DrawSphere(movetoPos, 0.5f);
-
-            Gizmos.color = UnityEngine.Color.gray;
-            Gizmos.DrawSphere(rectCenter, 0.5f);
-        }
+    public void CalculateOffset(Vector3 _center)
+    {
+        Vector3 center = new Vector3(_center.x, transform.position.y, _center.z);
+        offset = center - transform.position;
     }
 }
