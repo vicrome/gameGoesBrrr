@@ -60,7 +60,7 @@ public class Selector : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, 1000f, mask))
+            if (Physics.Raycast(ray, out hit, 1000f))
             {
                 if (hit.collider.CompareTag("Ground"))
                 {

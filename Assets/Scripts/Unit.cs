@@ -45,6 +45,7 @@ public class Unit : MonoBehaviour
             MoveToSpot(GetClosestDropOff(drops).transform.position);
             drops = null;
             isGathering = false;
+            targetNode.GetComponent<NodeManager>().miDiccionario.Remove(myAgent.GetComponent<Unit>().GetInstanceID());
             task = TaskList.Delivering;
         }
 
@@ -123,7 +124,7 @@ public class Unit : MonoBehaviour
         if (hitObject.tag == "Resource" && task == TaskList.Gathering)
         {
             isGathering = true;
-            hitObject.GetComponent<NodeManager>().numberGatherers++;
+            hitObject.GetComponent<NodeManager>().miDiccionario.Add(myAgent.GetComponent<Unit>().GetInstanceID(), isGathering);
             heldResourceType = hitObject.GetComponent<NodeManager>().resourceType;
             targetNode = hitObject;
         }
@@ -149,7 +150,6 @@ public class Unit : MonoBehaviour
 
         if (hitObject.tag == "Resource")
         {
-            hitObject.GetComponent<NodeManager>().numberGatherers--;
             isGathering = false;
         }
     }

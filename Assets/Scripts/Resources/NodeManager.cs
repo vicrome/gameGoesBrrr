@@ -10,9 +10,7 @@ public class NodeManager : MonoBehaviour
     public float harvestTime;
     public float availableResource;
 
-    public int numberGatherers;
-
-
+    public Dictionary<int, bool> miDiccionario = new Dictionary<int, bool>();
     // Start is called before the first frame update
     void Start()
     {
@@ -30,10 +28,10 @@ public class NodeManager : MonoBehaviour
 
     public void ResourceGather()
     {
-        if(numberGatherers > 0)
+        if(miDiccionario.Count > 0)
         {
-            availableResource -= (10 * numberGatherers);
-            Debug.Log("Resources number have been decreased in " + (10 * numberGatherers) + "by seg");
+            availableResource -= (10 * miDiccionario.Count);
+            Debug.Log("Resources number have been decreased in " + (10 * miDiccionario.Count) + "by seg");
         }
     }
 
