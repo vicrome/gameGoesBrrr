@@ -8,6 +8,8 @@ public class Selector : MonoBehaviour
     [Header("For Raycast")]
     public Camera cam;
     public LayerMask mask;
+    public GameObject UnitConstructionPanel;
+    public GameObject BuildingConstructionPanel;
 
     [Header("Gameobject for selection box")]
     public GameObject selectorBox;
@@ -24,6 +26,16 @@ public class Selector : MonoBehaviour
 
     //[Header("All of the currently Selected Units")]
     public List<GameObject> selectedObjects = new List<GameObject>();
+
+    public void Start()
+    {
+
+        //UnitConstructionPanel = GameObject.Find("Building_UI"); 
+        UnitConstructionPanel.SetActive(false);
+
+        //BuildingConstructionPanel = GameObject.Find("UnitCreation_UI");
+        BuildingConstructionPanel.SetActive(false);
+    }
 
     private void Update()
     {
@@ -68,9 +80,11 @@ public class Selector : MonoBehaviour
         {
             Unit unit = selectedObjects[i].GetComponent<Unit>();
             DeselectUnit(unit);
-        
+            UnitConstructionPanel.SetActive(false);
+
         }
 
+        BuildingConstructionPanel.SetActive(false);
         selectedObjects.Clear();
     }
 
@@ -88,6 +102,12 @@ public class Selector : MonoBehaviour
                 SelectUnit(unit);
                 CalculateOffset(rectCenter);
                 selectedObjects.Add(unit.gameObject);
+                UnitConstructionPanel.SetActive(true);
+            }
+            if (check[i].collider.CompareTag("Foundation_SP"))
+            {
+                BuildingConstructionPanel.SetActive(true);
+
             }
         }
     }
