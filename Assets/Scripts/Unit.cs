@@ -131,7 +131,7 @@ public class Unit : MonoBehaviour
         }
         else if(hitObject.tag == "Drops" && task == TaskList.Delivering)
         {
-            if (resourceManager.material1 < resourceManager.maxMaterial1)
+            if (targetNode!=null) // TODO fixear esto, targetNode no existe -- posible fix, target node como coordenadas
             {
                 resourceManager.material1 += heldResource;
                 heldResource = 0;
