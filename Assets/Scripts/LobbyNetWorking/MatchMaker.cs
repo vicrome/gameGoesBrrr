@@ -12,7 +12,9 @@ namespace MirrorBasics {
     public class Match
     {
         public string matchID;
-
+        public bool isPublicMatch;
+        public bool isMatchFull;
+        public bool isInMatch;
         public SyncListGameObject players = new SyncListGameObject();
 
         public Match(string matchID, GameObject player) 
@@ -45,13 +47,17 @@ namespace MirrorBasics {
         }
 
 
-        public bool HostGame(string matchID, GameObject playerGameObject, out int playerIndex) 
+        public bool HostGame(string matchID, GameObject playerGameObject, bool ispublicMatch, out int playerIndex) 
         {
             playerIndex = -1;
             if (!matchIDs.Contains(matchID))
             {
                 matchIDs.Add(matchID);
-                matches.Add(new Match(matchID, playerGameObject));
+                Match match = new Match(matchID, playerGameObject);
+                matches.Add(match);
+                Debug.Log("Match generated");
+                match.isPublicMatch = ispublicMatch;
+                playerGameObject.GetComponent<Player>().currentMatch = match;
                 playerIndex = 1;
                 Debug.Log("Match created succesfully");
                 return true;
@@ -73,6 +79,7 @@ namespace MirrorBasics {
                     if (matches[i].matchID == matchID)
                     {
                         matches[i].players.Add(playerGameObject);
+                        playerGameObject.GetComponent<Player>().currentMatch = matches[i];
                         playerIndex = matches[i].players.Count;
                         break;
                     }
@@ -108,6 +115,24 @@ namespace MirrorBasics {
             }
         }
 
+        public bool SearchGame(GameObject playerGameObject, out int playerIndex, out string matchID)
+        {
+            playerIndex = -1;
+            matchID = string.Empty;
+            for (int i = 0; i < matches.Count; i++)
+            {
+                if (matches[i].isPublicMatch && !matches[i].isMatchFull && !matches[i].isInMatch)
+                {
+                    matchID = matches[i].matchID;
+                    if (JoinGame(matchID, playerGameObject, out playerIndex))
+                    {
+                        return true;
+                    }                    
+                }
+            }
+            return false;
+        }
+
         public static string GetRandomMatchID() 
         {
             string id = string.Empty;
@@ -127,6 +152,27 @@ namespace MirrorBasics {
 
             Debug.Log("Random Match ID: " + id);
             return id;
+        }
+
+        public void PlayerDisconnects (Player player, string matchID)
+        {
+            for (int i = 0; i < matches.Count; i++)
+            {
+                if (matches[i].matchID == matchID)
+                {
+                    int playerIndex = matches[i].players.IndexOf(player.gameObject);
+                    matches[i].players.RemoveAt(playerIndex);
+                    Debug.Log("Player disconnected from match :" + matchID);
+                    Debug.Log(matches[i].players.Count + "players remaining.");
+                    if (matches[i].players.Count == 0)
+                    {
+                        Debug.Log("No more players in the Match. Ending " + matchID);
+                        matches.RemoveAt(i);
+                        matchIDs.Remove(matchID);
+                    }
+                    break;
+                }
+            }
         }
     }
 

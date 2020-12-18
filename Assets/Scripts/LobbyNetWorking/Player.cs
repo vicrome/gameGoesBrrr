@@ -14,32 +14,51 @@ namespace MirrorBasics {
 
         NetworkMatchChecker networkMatchChecker;
 
+        [SyncVar] public Match currentMatch;
+        GameObject playerLobbyUI;
+
         // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
             networkMatchChecker = GetComponent<NetworkMatchChecker>();
+        }
 
+        public override void OnStartClient()
+        {
             if (isLocalPlayer)
             {
                 localPlayer = this;
             }
             else
             {
-                UILobby.instance.SpawnPlayerUIPrefab(this);
+                Debug.Log("Spawning other player UI");
+                playerLobbyUI = UILobby.instance.SpawnPlayerUIPrefab(this);
             }
         }
 
-        public void HostGame(bool isPublic)
+        public override void OnStopClient()
+        {
+            Debug.Log("Client stopped");
+            ClientDisconnects();
+        }
+
+        public override void OnStopServer()
+        {
+            Debug.Log("Client stopped on server");
+            ServerDisconnects();
+        }
+
+        public void HostGame(bool isPublicMatch)
         {
             string matchID = MatchMaker.GetRandomMatchID();
-            CmdHostGame(matchID);
+            CmdHostGame(matchID, isPublicMatch);
         }
 
         [Command]
-        void CmdHostGame(string matchID)
+        void CmdHostGame(string matchID, bool isPublicMatch)
         {
             myMatchID = matchID;
-            if (MatchMaker.instance.HostGame(matchID, gameObject, out playerIndex))
+            if (MatchMaker.instance.HostGame(matchID, gameObject, isPublicMatch, out playerIndex))
             {
                 Debug.Log("Game hosted succesfully");
                 networkMatchChecker.matchId = matchID.ToGuid();
@@ -115,6 +134,68 @@ namespace MirrorBasics {
             Debug.Log("myMatchID:" + myMatchID + "is beginnning the scene 2");
             // Cargar la scena de nuestro Juego.
             SceneManager.LoadScene(2, LoadSceneMode.Additive);
+        }
+
+        public void SearchGame()
+        {
+            CmdSearchGame();
+        }
+
+        [Command]
+        public void CmdSearchGame()
+        {
+            if (MatchMaker.instance.SearchGame(gameObject, out playerIndex, out myMatchID))
+            {
+                Debug.Log("Game found succesfully");
+                networkMatchChecker.matchId = myMatchID.ToGuid();
+                TargetSearchGame(true, myMatchID, playerIndex);
+            }
+            else
+            {
+                Debug.Log("Game not found");
+                TargetSearchGame(false, myMatchID, playerIndex);
+            }
+        }
+
+        [TargetRpc]
+        void TargetSearchGame(bool success, string matchID, int _playerIndex)
+        {
+            playerIndex = _playerIndex;
+            myMatchID = matchID;
+            Debug.Log("myMatchID:" + myMatchID);
+            UILobby.instance.SearchSuccess(success, matchID);
+        }
+
+        public void DisconnectGame()
+        {
+            CmdDisconnectGame();
+        }
+
+        [Command]
+        public void CmdDisconnectGame()
+        {
+            ServerDisconnects();
+        }
+
+        void ServerDisconnects()
+        {
+            MatchMaker.instance.PlayerDisconnects(this, myMatchID);
+            networkMatchChecker.matchId = string.Empty.ToGuid();
+            RpcDisconnectGame(false, myMatchID, playerIndex);
+        }
+
+        [ClientRpc]
+        void RpcDisconnectGame(bool success, string matchID, int _playerIndex)
+        {
+            ClientDisconnects();
+        }
+
+        void ClientDisconnects()
+        {
+            if (playerLobbyUI != null)
+            {
+                Destroy(playerLobbyUI);
+            }
         }
     }
 }

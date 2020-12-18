@@ -779,7 +779,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 552569174}
         m_MethodName: SearchGame
         m_Mode: 1
         m_Arguments:
@@ -1608,7 +1608,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 921136545}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 552569174}
+        m_MethodName: CancelSearch
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &921136545
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2098,7 +2109,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1341398515}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 552569174}
+        m_MethodName: DisconnectLobby
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1341398515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3077,7 +3099,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 35122d80343068f4bab362f3a8f5a2a6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e226c347e09206e40b15f13b10b44c2b, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
