@@ -597,7 +597,7 @@ MonoBehaviour:
   showDebugMessages: 0
   serverTickRate: 30
   offlineScene: Assets/Scenes/Offline.unity
-  onlineScene: Assets/Scenes/Online.unity
+  onlineScene: Assets/Scenes/Lobby.unity
   transport: {fileID: 764612460}
   networkAddress: localhost
   maxConnections: 4
@@ -608,7 +608,8 @@ MonoBehaviour:
     type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 1508476382001956166, guid: 005c7f74da7517041ae5d937ced9ad26, type: 3}
 --- !u!4 &764612462
 Transform:
   m_ObjectHideFlags: 0
